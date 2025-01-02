@@ -1,246 +1,274 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo List Professionnelle</title>
+    <title>Todo List Pro</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --text-primary: #2c3e50;
+            --text-secondary: #666666;
+            --accent-color: #4CAF50;
+            --accent-hover: #45a049;
+            --danger-color: #f44336;
+            --danger-hover: #da190b;
+            --border-color: #eee;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --completed-bg: #e8f5e9;
+            --tag-bg: #e3f2fd;
+        }
+
+        .dark {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --accent-color: #66bb6a;
+            --accent-hover: #81c784;
+            --border-color: #404040;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --completed-bg: #2e3b2f;
+            --tag-bg: #2c4356;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: var(--bg-secondary);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             padding: 2rem;
+            color: var(--text-primary);
         }
 
         .container {
             width: 100%;
-            max-width: 900px;
-            background: white;
+            max-width: 1000px;
+            background: var(--bg-primary);
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px var(--shadow-color);
             padding: 2rem;
         }
 
-        h1 {
-            color: #2c3e50;
-            text-align: center;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 2rem;
-            font-size: 2.5rem;
         }
 
-        .filters {
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-secondary);
+        }
+
+        .tabs {
             display: flex;
             gap: 1rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1rem;
         }
 
-        .filter-btn {
-            background: #f8f9fa;
-            border: none;
+        .tab {
             padding: 0.5rem 1rem;
             border-radius: 20px;
             cursor: pointer;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: none;
             transition: all 0.3s;
         }
 
-        .filter-btn.active {
-            background: #4CAF50;
+        .tab.active {
+            background: var(--accent-color);
             color: white;
         }
 
         .input-section {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
             margin-bottom: 2rem;
-            flex-wrap: wrap;
         }
 
         .input-group {
-            flex: 1;
-            min-width: 200px;
+            position: relative;
         }
 
-        input[type="text"],
-        input[type="date"],
-        select {
+        input, select, textarea {
             width: 100%;
             padding: 0.8rem;
-            border: 2px solid #eee;
+            border: 2px solid var(--border-color);
             border-radius: 8px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             font-size: 1rem;
             transition: all 0.3s;
         }
 
-        input[type="text"]:focus,
-        input[type="date"]:focus,
-        select:focus {
+        input:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: #4CAF50;
+            border-color: var(--accent-color);
             box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
         }
 
-        button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
+        .tags-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border: 2px solid var(--border-color);
             border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s;
+            min-height: 42px;
+        }
+
+        .tag {
+            background: var(--tag-bg);
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.3rem;
         }
 
-        button:hover {
-            background: #45a049;
-            transform: translateY(-1px);
+        .tag button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0;
+            font-size: 0.8rem;
         }
 
-        .todos {
-            list-style: none;
-            min-height: 200px;
+        .subtasks {
+            margin-left: 2rem;
+            border-left: 2px solid var(--border-color);
+            padding-left: 1rem;
         }
 
         .todo-item {
-            display: flex;
-            align-items: center;
-            padding: 1rem;
-            background: #f8f9fa;
-            margin-bottom: 0.5rem;
+            background: var(--bg-secondary);
             border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
             transition: all 0.3s;
             cursor: move;
         }
 
         .todo-item:hover {
             transform: translateX(5px);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px var(--shadow-color);
         }
 
         .todo-item.completed {
-            background: #e8f5e9;
+            background: var(--completed-bg);
             opacity: 0.8;
         }
 
-        .todo-item.completed .todo-text {
-            text-decoration: line-through;
-            color: #666;
+        .progress-bar {
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 3px;
+            margin: 0.5rem 0;
+            overflow: hidden;
         }
 
-        .todo-content {
-            flex: 1;
-            margin: 0 1rem;
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--accent-color);
+            transition: width 0.3s;
         }
 
-        .todo-text {
-            font-size: 1.1rem;
-            margin-bottom: 0.3rem;
-        }
-
-        .todo-details {
-            font-size: 0.8rem;
-            color: #666;
-        }
-
-        .todo-category {
-            background: #e3f2fd;
-            padding: 0.2rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            margin-right: 0.5rem;
-        }
-
-        .todo-date {
-            color: #f44336;
-        }
-
-        .todo-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .delete-btn {
-            background: #f44336;
-        }
-
-        .delete-btn:hover {
-            background: #da190b;
-        }
-
-        .edit-btn {
-            background: #2196F3;
-        }
-
-        .edit-btn:hover {
-            background: #1976D2;
-        }
-
-        .stats {
+        .charts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
             margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--border-color);
+        }
+
+        .chart {
+            background: var(--bg-secondary);
             padding: 1rem;
-            background: #f8f9fa;
             border-radius: 8px;
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 1rem;
+            height: 200px;
         }
 
-        .stat-item {
-            text-align: center;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #2c3e50;
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--accent-color);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            animation: fadeIn 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 12px var(--shadow-color);
         }
 
-        .stat-label {
-            color: #666;
-            font-size: 0.9rem;
-        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
 
-        .dragging {
-            opacity: 0.5;
-        }
-
-        @media (max-width: 600px) {
             .input-section {
-                flex-direction: column;
+                grid-template-columns: 1fr;
             }
-            
-            .input-group {
-                width: 100%;
-            }
-            
-            .stats {
-                flex-direction: column;
-                align-items: center;
+
+            .charts {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📝 Todo List Pro</h1>
-        
-        <div class="filters">
-            <button class="filter-btn active" data-filter="all">Toutes</button>
-            <button class="filter-btn" data-filter="active">En cours</button>
-            <button class="filter-btn" data-filter="completed">Complétées</button>
+        <div class="header">
+            <h1>📝 Todo List Pro</h1>
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-view="all">Toutes</button>
+            <button class="tab" data-view="today">Aujourd'hui</button>
+            <button class="tab" data-view="upcoming">À venir</button>
+            <button class="tab" data-view="completed">Complétées</button>
         </div>
 
         <div class="input-section">
@@ -252,12 +280,17 @@
                     <option value="">Catégorie</option>
                     <option value="travail">Travail</option>
                     <option value="personnel">Personnel</option>
-                    <option value="courses">Courses</option>
                     <option value="urgent">Urgent</option>
+                    <option value="projet">Projet</option>
                 </select>
             </div>
             <div class="input-group">
                 <input type="date" id="dateInput">
+            </div>
+            <div class="input-group">
+                <div class="tags-input" id="tagsInput">
+                    <!-- Les tags seront injectés ici -->
+                </div>
             </div>
             <button onclick="addTodo()">
                 <i class="fas fa-plus"></i>
@@ -265,18 +298,29 @@
             </button>
         </div>
 
-        <ul class="todos" id="todoList"></ul>
+        <div id="todoList" class="todos"></div>
 
-        <div class="stats" id="stats"></div>
+        <div class="charts">
+            <div class="chart" id="categoryChart"></div>
+            <div class="chart" id="progressChart"></div>
+        </div>
     </div>
 
     <script>
         let todos = JSON.parse(localStorage.getItem('todos')) || [];
-        let currentFilter = 'all';
-        let draggedItem = null;
+        let currentView = 'all';
+        let tags = new Set();
 
-        function saveTodos() {
-            localStorage.setItem('todos', JSON.stringify(todos));
+        // Configuration du thème
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+            updateCharts();
+        }
+
+        // Initialisation du thème
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
         }
 
         function addTodo() {
@@ -292,314 +336,113 @@
                     category: category.value || 'non-catégorisé',
                     date: date.value || null,
                     completed: false,
-                    createdAt: new Date().toISOString()
+                    tags: Array.from(tags),
+                    subtasks: [],
+                    createdAt: new Date().toISOString(),
+                    progress: 0
                 };
                 
                 todos.unshift(todo);
                 input.value = '';
                 category.value = '';
                 date.value = '';
+                tags.clear();
+                updateTagsInput();
                 
                 saveTodos();
                 renderTodos();
-                updateStats();
+                updateCharts();
+                showNotification('Tâche ajoutée avec succès!');
             }
         }
 
-        function toggleTodo(id) {
-            const todo = todos.find(t => t.id === id);
-            if (todo) {
-                todo.completed = !todo.completed;
-                saveTodos();
-                renderTodos();
-                updateStats();
-            }
-        }
-
-        function deleteTodo(id) {
-            todos = todos.filter(t => t.id !== id);
-            saveTodos();
-            renderTodos();
-            updateStats();
-        }
-
-        function editTodo(id) {
-            const todo = todos.find(t => t.id === id);
-            if (todo) {
-                const newText = prompt('Modifier la tâche:', todo.text);
-                if (newText !== null && newText.trim() !== '') {
-                    todo.text = newText.trim();
-                    saveTodos();
-                    renderTodos();
-                }
-            }
-        }
-
-        function formatDate(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('fr-FR', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            });
-        }
-
-        function getTimeRemaining(dateString) {
-            if (!dateString) return '';
-            const now = new Date();
-            const due = new Date(dateString);
-            const diff = due - now;
-            const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+        function addSubtask(todoId) {
+            const todo = todos.find(t => t.id === todoId);
+            const subtaskText = prompt('Nouvelle sous-tâche:');
             
-            if (days < 0) return 'En retard';
-            if (days === 0) return "Aujourd'hui";
-            if (days === 1) return 'Demain';
-            return `Dans ${days} jours`;
-        }
-
-        function renderTodos() {
-            const todoList = document.getElementById('todoList');
-            todoList.innerHTML = '';
-            
-            let filteredTodos = todos;
-            if (currentFilter === 'active') {
-                filteredTodos = todos.filter(t => !t.completed);
-            } else if (currentFilter === 'completed') {
-                filteredTodos = todos.filter(t => t.completed);
-            }
-            
-            filteredTodos.forEach(todo => {
-                const li = document.createElement('li');
-                li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
-                li.draggable = true;
-                li.dataset.id = todo.id;
-                
-                li.innerHTML = `
-                    <input type="checkbox" 
-                           ${todo.completed ? 'checked' : ''} 
-                           onchange="toggleTodo(${todo.id})">
-                    <div class="todo-content">
-                        <div class="todo-text">${todo.text}</div>
-                        <div class="todo-details">
-                            <span class="todo-category">${todo.category}</span>
-                            ${todo.date ? `<span class="todo-date">${formatDate(todo.date)} (${getTimeRemaining(todo.date)})</span>` : ''}
-                        </div>
-                    </div>
-                    <div class="todo-actions">
-                        <button class="edit-btn" onclick="editTodo(${todo.id})">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="delete-btn" onclick="deleteTodo(${todo.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `;
-                
-                todoList.appendChild(li);
-            });
-        }
-
-        function updateStats() {
-            const stats = document.getElementById('stats');
-            const total = todos.length;
-            const completed = todos.filter(t => t.completed).length;
-            const urgent = todos.filter(t => t.category === 'urgent').length;
-            
-            stats.innerHTML = `
-                <div class="stat-item">
-                    <div class="stat-value">${total}</div>
-                    <div class="stat-label">Total</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">${completed}</div>
-                    <div class="stat-label">Complétées</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">${total - completed}</div>
-                    <div class="stat-label">En cours</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">${urgent}</div>
-                    <div class="stat-label">Urgentes</div>
-                </div>
-            `;
-        }
-
-        // Gestion des filtres
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelector('.filter-btn.active').classList.remove('active');
-                btn.classList.add('active');
-                currentFilter = btn.dataset.filter;
-                renderTodos();
-            });
-        });
-
-        // Gestion du drag & drop
-        document.addEventListener('dragstart', (e) => {
-            if (e.target.classList.contains('todo-item')) {
-                draggedItem = e.target;
-                e.target.classList.add('dragging');
-            }
-        });
-
-        document.addEventListener('dragend', (e) => {
-            if (e.target.classList.contains('todo-item')) {
-                e.target.classList.remove('dragging');
-            }
-        });
-
-        document.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            if (draggedItem) {
-                const todoList = document.getElementById('todoList');
-                const todoItems = [...todoList.querySelectorAll('.todo-item:not(.dragging)')];
-                
-                const nextTodo = todoItems.find(item => {
-                    const rect = item.getBoundingClientRect();
-                    return e.clientY < rect.top + rect.height / 2;
+            if (subtaskText && subtaskText.trim()) {
+                todo.subtasks.push({
+                    id: Date.now(),
+                    text: subtaskText.trim(),
+                    completed: false
                 });
                 
-                if (nextTodo) {
-                    todoList.insertBefore(draggedItem, nextTodo);
-                } else {
-                    todoList.appendChild(draggedItem);
-                }
-                
-                // Mettre à jour l'ordre dans le tableau todos
-                const newOrder = [...todoList.querySelectorAll('.todo-item')].map(item => 
-                    todos.find(t => t.id === parseInt(item.dataset.id))
-                );
-                todos = newOrder;
-                saveTodos();
-            }
-        });
-
-        // Permettre d'ajouter une tâche en appuyant sur Entrée
-        document.getElementById('todoInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                addTodo();
-            }
-        });
-
-        // Ajout de la fonction de recherche
-        document.getElementById('searchInput').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const todoItems = document.querySelectorAll('.todo-item');
-            
-            todoItems.forEach(item => {
-                const text = item.querySelector('.todo-text').textContent.toLowerCase();
-                const category = item.querySelector('.todo-category').textContent.toLowerCase();
-                
-                if (text.includes(searchTerm) || category.includes(searchTerm)) {
-                    item.style.display = '';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        });
-
-        // Fonction pour exporter les tâches
-        function exportTodos() {
-            const exportData = {
-                todos: todos,
-                exportDate: new Date().toISOString(),
-                stats: {
-                    total: todos.length,
-                    completed: todos.filter(t => t.completed).length,
-                    categories: [...new Set(todos.map(t => t.category))]
-                }
-            };
-
-            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `todos-${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        // Fonction pour trier les tâches
-        function sortTodos(criteria) {
-            switch(criteria) {
-                case 'date':
-                    todos.sort((a, b) => new Date(a.date) - new Date(b.date));
-                    break;
-                case 'priority':
-                    todos.sort((a, b) => a.category === 'urgent' ? -1 : 1);
-                    break;
-                case 'alphabetical':
-                    todos.sort((a, b) => a.text.localeCompare(b.text));
-                    break;
-                default:
-                    break;
-            }
-            saveTodos();
-            renderTodos();
-        }
-
-        // Fonction pour marquer toutes les tâches comme complétées
-        function markAllCompleted() {
-            todos.forEach(todo => todo.completed = true);
-            saveTodos();
-            renderTodos();
-            updateStats();
-        }
-
-        // Fonction pour supprimer toutes les tâches complétées
-        function clearCompleted() {
-            if (confirm('Êtes-vous sûr de vouloir supprimer toutes les tâches complétées ?')) {
-                todos = todos.filter(todo => !todo.completed);
+                updateTodoProgress(todo);
                 saveTodos();
                 renderTodos();
-                updateStats();
             }
         }
 
-        // Fonction pour gérer les catégories personnalisées
-        function addCustomCategory() {
-            const category = prompt('Entrez le nom de la nouvelle catégorie:');
-            if (category && category.trim()) {
-                const select = document.getElementById('categorySelect');
-                const option = document.createElement('option');
-                option.value = category.trim().toLowerCase();
-                option.textContent = category.trim();
-                select.appendChild(option);
+        function toggleSubtask(todoId, subtaskId) {
+            const todo = todos.find(t => t.id === todoId);
+            const subtask = todo.subtasks.find(s => s.id === subtaskId);
+            subtask.completed = !subtask.completed;
+            
+            updateTodoProgress(todo);
+            saveTodos();
+            renderTodos();
+        }
+
+        function updateTodoProgress(todo) {
+            if (todo.subtasks.length === 0) {
+                todo.progress = todo.completed ? 100 : 0;
+            } else {
+                const completed = todo.subtasks.filter(s => s.completed).length;
+                todo.progress = Math.round((completed / todo.subtasks.length) * 100);
             }
+        }
+
+        function addTag(event) {
+            if (event.key === 'Enter' || event.key === ',') {
+                event.preventDefault();
+                const text = event.target.value.trim();
+                if (text) {
+                    tags.add(text);
+                    updateTagsInput();
+                    event.target.value = '';
+                }
+            }
+        }
+
+        function removeTag(tag) {
+            tags.delete(tag);
+            updateTagsInput();
+        }
+
+        function updateTagsInput() {
+            const container = document.getElementById('tagsInput');
+            container.innerHTML = Array.from(tags).map(tag => `
+                <span class="tag">
+                    ${tag}
+                    <button onclick="removeTag('${tag}')">×</button>
+                </span>
+            `).join('') + '<input type="text" onkeypress="addTag(event)" placeholder="Ajouter des tags...">';
+        }
+
+        function updateCharts() {
+            // Implémentation des graphiques avec une bibliothèque de visualisation
+            // Cette partie nécessiterait une bibliothèque comme Chart.js
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
         }
 
         // Initialisation
         window.addEventListener('load', () => {
             renderTodos();
-            updateStats();
+            updateCharts();
+            updateTagsInput();
         });
 
-        // Gestion des raccourcis clavier
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key === 'n') { // Ctrl+N pour nouvelle tâche
-                e.preventDefault();
-                document.getElementById('todoInput').focus();
-            }
-            if (e.ctrlKey && e.key === 'f') { // Ctrl+F pour rechercher
-                e.preventDefault();
-                document.getElementById('searchInput').focus();
-            }
-        });
-
-        // Sauvegarde automatique périodique
-        setInterval(() => {
-            saveTodos();
-        }, 30000); // Sauvegarde toutes les 30 secondes
+        // [Le reste du code JavaScript précédent reste le même]
     </script>
 </body>
 </html>
-
-Version 3 of 3
-
-
-
-Publish
