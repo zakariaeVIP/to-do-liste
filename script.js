@@ -1,9 +1,9 @@
+document.addEventListener('DOMContentLoaded', loadTasks);
+
 const taskForm = document.getElementById('task-form');
 const taskInput = document.getElementById('task-input');
 const prioritySelect = document.getElementById('priority-select');
 const taskList = document.getElementById('task-list');
-
-document.addEventListener('DOMContentLoaded', loadTasks);
 
 taskForm.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -20,11 +20,12 @@ taskForm.addEventListener('submit', (e) => {
 
 function addTaskToList(task) {
   const li = document.createElement('li');
+  li.className = 'collection-item';
   li.innerHTML = `
     <span>${task.text} (${task.priority})</span>
     <div>
-      <button class="complete">✔</button>
-      <button class="delete">✖</button>
+      <button class="complete btn-small waves-effect waves-light">✔</button>
+      <button class="delete btn-small waves-effect waves-light red">✖</button>
     </div>
   `;
   li.classList.toggle('completed', task.completed);
